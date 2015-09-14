@@ -2,7 +2,7 @@ package br.unisinos.aso.model;
 
 public class DemographicalIdentification {
 	private String name;
-	private String sex;
+	private String gender;
 	private int age;
 	
 	public String getName() {
@@ -11,11 +11,11 @@ public class DemographicalIdentification {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getSex() {
-		return sex;
+	public String getGender() {
+		return gender;
 	}
-	public void setSex(String sex) {
-		this.sex = sex;
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	public int getAge() {
 		return age;
