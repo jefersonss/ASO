@@ -1,10 +1,17 @@
 package br.unisinos.aso.model;
 
 public class Patient {
+	private int id;
 	private DemographicalIdentification identification;
 	private Disease disease;
 	private Treatment treatment;
 	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public DemographicalIdentification getIdentification() {
 		return identification;
 	}
