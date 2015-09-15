@@ -1,0 +1,5 @@
+/aso/target/*
+/aso/*.classpath
+/aso/.settings
+/aso/*.project
+/.metadata
