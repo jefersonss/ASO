@@ -21,6 +21,7 @@ public class Main {
 		session.save(exam);
 		tx.commit();
 		session.close();
+		factory.close();
 	}
 
 }

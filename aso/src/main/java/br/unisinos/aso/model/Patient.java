@@ -1,10 +1,15 @@
 package br.unisinos.aso.model;
 
+import java.util.List;
+
+import javax.persistence.*;
+
+
 public class Patient {
 	private int id;
 	private DemographicalIdentification identification;
-	private Disease disease;
-	private Treatment treatment;
+	private List<Disease> disease;
+	private List<Treatment> treatment;
 	
 	public int getId() {
 		return id;
@@ -15,16 +20,22 @@ public class Patient {
 	public void setIdentification(DemographicalIdentification identification) {
 		this.identification = identification;
 	}
-	public Disease getDisease() {
+	
+	@ManyToMany
+	@JoinTable(name = "patient_disease", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "disease_id") })
+	public List<Disease> getDisease() {
 		return disease;
 	}
-	public void setDisease(Disease disease) {
+	public void setDisease(List<Disease> disease) {
 		this.disease = disease;
 	}
-	public Treatment getTreatment() {
+	
+	@ManyToMany
+	@JoinTable(name = "patient_treatment", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
+	public List<Treatment> getTreatment() {
 		return treatment;
 	}
-	public void setTreatment(Treatment treatment) {
+	public void setTreatment(List<Treatment> treatment) {
 		this.treatment = treatment;
 	}
 }

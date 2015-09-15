@@ -2,20 +2,30 @@ package br.unisinos.aso.model;
 
 import java.util.List;
 
+import javax.persistence.*;
+
+@Entity
 public class Treatment {
+	@Id
 	private int id;
-	private Exam exam;
 	private String observations;
+	@ManyToMany
+	@JoinTable(name = "treat_exam", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "exam_id") })
+	private List<Exam> exam;
+	@ManyToMany
+	@JoinTable(name = "recomended_treat_med", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Medication> recommendedMedication;
+	@ManyToMany
+	@JoinTable(name = "administered_treat_med", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Medication> administeredMedication;
 	
 	public int getId() {
 		return id;
 	}
-	public Exam getExam() {
+	public List<Exam> getExam() {
 		return exam;
 	}
-	public void setExam(Exam exam) {
+	public void setExam(List<Exam> exam) {
 		this.exam = exam;
 	}
 	public String getObservations() {

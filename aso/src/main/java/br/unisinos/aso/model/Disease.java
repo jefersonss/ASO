@@ -1,6 +1,11 @@
 package br.unisinos.aso.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class Disease {
+	@Id
 	private int id;
 	private String name;
 
