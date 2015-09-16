@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Entity
 public class Treatment {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private String observations;
 	@ManyToMany
@@ -45,5 +46,13 @@ public class Treatment {
 	}
 	public void setAdministeredMedication(List<Medication> administeredMedication) {
 		this.administeredMedication = administeredMedication;
+	}
+	
+	@Override
+	public String toString() {
+		return "Treatment [id=" + id + ", observations=" + observations
+				+ ", exam=" + exam + ", recommendedMedication="
+				+ recommendedMedication + ", administeredMedication="
+				+ administeredMedication + "]";
 	}
 }

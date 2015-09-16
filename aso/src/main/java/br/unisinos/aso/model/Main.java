@@ -1,27 +1,29 @@
 package br.unisinos.aso.model;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import java.util.List;
+
+import br.unisinos.aso.dao.PatientDAO;
 
 public class Main {
 
 	public static void main(String[] args) {
-		Configuration configuration = new Configuration();
-		configuration.configure();
-
-		SessionFactory factory = configuration.buildSessionFactory();
-		Session session = factory.openSession();
+		PatientDAO dao = new PatientDAO();
+//		Patient patient = new Patient();
+//		patient.setAge(25);
+//		patient.setGender("F");
+//		patient.setName("Joazinho");
+//		dao.savePatient(patient);
 		
+//		Patient patient2 = new Patient();
+//		patient2.setAge(23);
+//		patient2.setGender("M");
+//		patient2.setName("Joazinho");
+//		dao.savePatient(patient2);
 		
-		Exam exam = new Exam();
-		exam.setName("Raio X");
-
-		org.hibernate.Transaction tx = session.beginTransaction();
-		session.save(exam);
-		tx.commit();
-		session.close();
-		factory.close();
+		List<Patient> patient = dao.getPatients();
+		System.out.println(patient);
+		
+		dao.commitAndCloseConnection();
 	}
 
 }

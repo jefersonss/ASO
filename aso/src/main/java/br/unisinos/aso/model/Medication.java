@@ -1,11 +1,11 @@
 package br.unisinos.aso.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Medication {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private String name;
 	private String type;
@@ -24,5 +24,11 @@ public class Medication {
 	}
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	@Override
+	public String toString() {
+		return "Medication [id=" + id + ", name=" + name + ", type=" + type
+				+ "]";
 	} 
 }

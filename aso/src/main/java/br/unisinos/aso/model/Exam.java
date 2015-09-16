@@ -1,12 +1,12 @@
 package br.unisinos.aso.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Entity
 public class Exam {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private String name;
 
@@ -18,5 +18,10 @@ public class Exam {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return "Exam [id=" + id + ", name=" + name + "]";
 	}
 }
