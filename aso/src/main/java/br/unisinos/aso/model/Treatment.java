@@ -10,13 +10,13 @@ public class Treatment {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	private String observations;
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "treat_exam", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "exam_id") })
 	private List<Exam> exam;
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "recomended_treat_med", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Medication> recommendedMedication;
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "administered_treat_med", joinColumns = { @JoinColumn(name = "medication_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Medication> administeredMedication;
 	

@@ -11,7 +11,7 @@ public class PatientDAO extends BaseDAO {
 	public void savePatient(Patient patient){
 		openConnection();
 		session.save(patient);
-		commitAndCloseConnection();
+//		commitAndCloseConnection();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -38,5 +38,10 @@ public class PatientDAO extends BaseDAO {
 	@Override
 	public void commitAndCloseConnection() {
 		super.commitAndCloseConnection();
+	}
+	
+	@Override
+	public void openConnection() {
+		super.openConnection();
 	}
 }

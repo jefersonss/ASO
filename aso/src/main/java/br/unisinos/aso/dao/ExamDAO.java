@@ -9,7 +9,8 @@ public class ExamDAO extends BaseDAO {
 	public void saveExam(Exam exam){
 		openConnection();
 		session.save(exam);
-		commitAndCloseConnection();
+		transaction.commit();
+//		commitAndCloseConnection();
 	}
 	
 	public List<Exam> searchExamByName(String name){

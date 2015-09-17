@@ -14,14 +14,21 @@ public class BaseDAO {
 		factory = configuration.buildSessionFactory();
 	}
 	
-	protected void openConnection(){
-		session = factory.openSession();
+	public void openConnection(){
+		if(null != null && !session.isOpen())
+			session = factory.openSession();
+		else
+			session = factory.getCurrentSession();
 		transaction = session.beginTransaction();
 	}
 	
-	protected void commitAndCloseConnection(){
-		transaction.commit();
-		session.close();
-		factory.close();
+	public void commitAndCloseConnection() {
+		try {
+			transaction.commit();
+			session.close();
+			factory.close();
+		} catch (SessionException e) {
+			System.out.println("Session already closed");
+		}
 	}
 }
