@@ -21,7 +21,7 @@ public class Main {
 //		disease.setName("Cancer");
 //		patient.setDisease(Arrays.asList(disease));
 //		diseaseDao.saveDisease(disease);
-		
+//		
 //		Treatment treatment = new Treatment();
 //		treatment.setObservations("Cancer in the lungs due to cigarrete");
 //		
@@ -61,5 +61,4 @@ public class Main {
 		System.out.println(patients);
 		
 	}
-
 }

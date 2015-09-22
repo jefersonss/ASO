@@ -35,6 +35,12 @@ public class PatientDAO extends BaseDAO {
 		return query.list();
 	}
 	
+	public void updatePatient(Patient patient) {
+		openConnection();
+		session.update(patient);
+		commitAndCloseConnection();
+	}
+	
 	@Override
 	public void commitAndCloseConnection() {
 		super.commitAndCloseConnection();
@@ -44,4 +50,5 @@ public class PatientDAO extends BaseDAO {
 	public void openConnection() {
 		super.openConnection();
 	}
+
 }
