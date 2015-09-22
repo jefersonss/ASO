@@ -1,26 +1,98 @@
 package br.unisinos.aso.hl7.converter;
 
+import java.util.*;
+
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
+
 import br.unisinos.aso.model.*;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.model.DataTypeException;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v22.datatype.*;
+import ca.uhn.hl7v2.model.v22.message.ADT_A01;
+import ca.uhn.hl7v2.parser.Parser;
 
 public class Converter {
 
-	public Patient convertFromHL7ToPatientObj(String hl7Data){
-		return null;
+	public Patient convertFromHL7ToPatientObj(String hl7Data) {
+		ADT_A01 message = convert(hl7Data);
+		Patient patient = new Patient();
+		
+		patient.setDisease(Arrays.asList(getDiseaseData(message)));
+		patient.setTreatment(getTreatmentData(message));
+		getTreatmentData(message);
+		
+		PN hl7Name = message.getPID().getPatientName();
+		patient.setName(hl7Name.getGivenName()+" "+hl7Name.getMiddleInitialOrName()+" "+hl7Name.getFamilyName());
+		
+		patient.setGender(message.getPID().getSex().getValue());
+		patient.setAge(calculatePatientAge(message));
+		
+		return patient;
 	}
-	
-	public Exam getExamData(String hl7Data){
-		return null;
+
+	private int calculatePatientAge(ADT_A01 message){
+		int patientAge = 0;
+		
+		try {
+			int day = message.getPID().getDateOfBirth().getTimeOfAnEvent().getDay();
+			int month = message.getPID().getDateOfBirth().getTimeOfAnEvent().getMonth();
+			int year = message.getPID().getDateOfBirth().getTimeOfAnEvent().getYear();
+			LocalDate birthdate = new LocalDate (year, month, day);
+			LocalDate now = new LocalDate();
+			patientAge = Years.yearsBetween(birthdate, now).getYears();
+		} catch (DataTypeException e) {
+			e.printStackTrace();
+		}
+		
+		return patientAge;
 	}
-	
-	public Disease getDiseaseData(String hl7Data){
-		return null;
+
+	private List<Exam> getExamData(ADT_A01 message) {
+		List<Exam> exams = new ArrayList<Exam>();
+		
+		ST[] procedureDescription = message.getPR1().getProcedureDescription();
+		for (ST description : procedureDescription) {
+			Exam exam = new Exam();
+			exam.setName(description.getValue());
+		}
+		return exams;
 	}
-	
-	public Medication getMedicationData(String hl7Data){
-		return null;
+
+	private Disease getDiseaseData(ADT_A01 message) {
+		Disease disease = new Disease();
+		disease.setName(message.getDG1().getDiagnosisDescription().getValue());
+		return disease;
 	}
-	
-	public Treatment getTreatmentData(String hl7Data){
-		return null;
+
+	public List<Medication> getMedicationData(ADT_A01 message) {
+		Medication medication = new Medication();
+		
+		
+		return Arrays.asList(medication);
+	}
+
+	private List<Treatment> getTreatmentData(ADT_A01 message) {
+		Treatment treatment = new Treatment();
+		treatment.setAdministeredMedication(getMedicationData(message));
+		treatment.setRecommendedMedication(getMedicationData(message));
+		treatment.setExam(getExamData(message));
+		
+		return Arrays.asList(treatment);
+	}
+
+	private ADT_A01 convert(String hl7Data) {
+		HapiContext context = new DefaultHapiContext();
+		Parser p = context.getGenericParser();
+		Message convertedMsg;
+		try {
+			convertedMsg = p.parse(hl7Data);
+			context.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return (ADT_A01) convertedMsg;
 	}
 }
