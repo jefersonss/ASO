@@ -2,6 +2,8 @@ package br.unisinos.aso.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
+
 import br.unisinos.aso.model.Exam;
 
 public class ExamDAO extends BaseDAO {
@@ -13,7 +15,11 @@ public class ExamDAO extends BaseDAO {
 //		commitAndCloseConnection();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<Exam> searchExamByName(String name){
-		return null;
+		openConnection();
+		String hql = "FROM Exam E WHERE E.name LIKE :exam_name";
+		Query query = session.createQuery(hql).setParameter("exam_name", name+"%");
+		return query.list();
 	}
 }

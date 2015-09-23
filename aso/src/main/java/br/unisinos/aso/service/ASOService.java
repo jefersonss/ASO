@@ -3,8 +3,8 @@ package br.unisinos.aso.service;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import br.unisinos.aso.converter.hl7.HL7Converter;
 import br.unisinos.aso.dao.PatientDAO;
-import br.unisinos.aso.hl7.converter.Converter;
 import br.unisinos.aso.model.Patient;
 
 @Path("aso")
@@ -14,7 +14,7 @@ public class ASOService {
 	@POST
 	@Consumes(MediaType.TEXT_PLAIN)
 	public void aggregateMiscelaneousInfo(String patientData){
-		Converter hl7Converter = new Converter();
+		HL7Converter hl7Converter = new HL7Converter();
 		Patient patient = hl7Converter.convertFromHL7ToPatientObj(patientData);
 		PatientDAO patientDAO = new PatientDAO();
 		patientDAO.updatePatient(patient);
@@ -23,7 +23,7 @@ public class ASOService {
 	@Path("/retrieve/{id}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String retrievePatientOnthology(@PathParam("id") String patientId){
+	public String retrievePatientOntology(@PathParam("id") String patientId){
 		return null;
 	}
 }

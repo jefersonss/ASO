@@ -1,4 +1,4 @@
-package br.unisinos.aso.hl7.converter;
+package br.unisinos.aso.converter.hl7;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ import ca.uhn.hl7v2.model.v22.datatype.*;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.parser.Parser;
 
-public class Converter {
+public class HL7Converter {
 
 	public Patient convertFromHL7ToPatientObj(String hl7Data) {
 		ADT_A01 message = convert(hl7Data);

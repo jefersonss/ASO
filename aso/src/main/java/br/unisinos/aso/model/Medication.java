@@ -1,5 +1,7 @@
 package br.unisinos.aso.model;
 
+import java.sql.Date;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,6 +11,7 @@ public class Medication {
 	private int id;
 	private String name;
 	private String type;
+	private Date dateAdministered;
 	
 	public int getId() {
 		return id;
@@ -26,6 +29,12 @@ public class Medication {
 		this.type = type;
 	}
 	
+	public Date getDateAdministered() {
+		return dateAdministered;
+	}
+	public void setDateAdministered(Date dateAdministered) {
+		this.dateAdministered = dateAdministered;
+	}
 	@Override
 	public String toString() {
 		return "Medication [id=" + id + ", name=" + name + ", type=" + type

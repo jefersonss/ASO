@@ -1,5 +1,6 @@
 package br.unisinos.aso.model;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class Patient {
 	private String name;
 	private int age;
 	private String gender;
+	private Date lastEnteredDate;
 	
 	public int getId() {
 		return id;
@@ -51,6 +53,12 @@ public class Patient {
 	}
 	public void setGender(String gender) {
 		this.gender = gender;
+	}
+	public Date getLastEnteredDate() {
+		return lastEnteredDate;
+	}
+	public void setLastEnteredDate(Date lastEnteredDate) {
+		this.lastEnteredDate = lastEnteredDate;
 	}
 	@Override
 	public String toString() {
