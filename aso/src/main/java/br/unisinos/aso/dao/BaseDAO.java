@@ -7,12 +7,12 @@ public class BaseDAO {
 	protected static SessionFactory factory;
 	protected Session session;
 	protected Transaction transaction;
-
-	static{
-		Configuration configuration = new Configuration();
-		configuration.configure();
-		factory = configuration.buildSessionFactory();
-	}
+	
+//	static{
+//		Configuration configuration = new Configuration();
+//		configuration.configure();
+//		factory = configuration.buildSessionFactory();
+//	}
 	
 	public void openConnection(){
 		if(null != null && !session.isOpen())

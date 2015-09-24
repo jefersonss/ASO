@@ -2,53 +2,56 @@ package br.unisinos.aso.dao;
 
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import br.unisinos.aso.model.Patient;
 
-public class PatientDAO extends BaseDAO {
+@Repository
+public class PatientDAO{
+	
+	@Autowired
+	private SessionFactory sessionFactory;
 
 	public void savePatient(Patient patient){
-		openConnection();
-		session.save(patient);
-//		commitAndCloseConnection();
+		Session session = this.sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
+		session.persist(patient);
+		tx.commit();
+		session.close();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Patient> searchPatientByName(String name){
-		openConnection();
+		Session session = this.sessionFactory.openSession();
 		String hql = "FROM Patient P WHERE P.name LIKE :patient_name";
 		Query query = session.createQuery(hql).setParameter("patient_name", name+"%");
 		return query.list();
 	}
 	
 	public Patient getPatientById(int patientId){
-		openConnection();
-		return session.get(Patient.class, patientId);
+		Session session = this.sessionFactory.openSession();
+		return (Patient) session.get(Patient.class, patientId);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Patient> getPatients(){
-		openConnection();
+		Session session = this.sessionFactory.openSession();
 		String hql = "FROM Patient";
 		Query query = session.createQuery(hql);
 		return query.list();
 	}
 	
 	public void updatePatient(Patient patient) {
-		openConnection();
+		Session session = this.sessionFactory.openSession();
+		Transaction tx = session.beginTransaction();
 		session.update(patient);
-		commitAndCloseConnection();
+		tx.commit();
+		session.close();
 	}
 	
-	@Override
-	public void commitAndCloseConnection() {
-		super.commitAndCloseConnection();
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
 	}
-	
-	@Override
-	public void openConnection() {
-		super.openConnection();
-	}
-
 }

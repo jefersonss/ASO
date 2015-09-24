@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.springframework.stereotype.Component;
 
 import br.unisinos.aso.model.*;
 import ca.uhn.hl7v2.DefaultHapiContext;
@@ -14,6 +15,7 @@ import ca.uhn.hl7v2.model.v22.datatype.*;
 import ca.uhn.hl7v2.model.v22.message.ADT_A01;
 import ca.uhn.hl7v2.parser.Parser;
 
+@Component
 public class HL7Converter {
 
 	public Patient convertFromHL7ToPatientObj(String hl7Data) {
