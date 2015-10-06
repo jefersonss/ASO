@@ -17,6 +17,7 @@ public class Patient {
 	@JoinTable(name = "patient_treatment", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Treatment> treatment;
 	private String name;
+	private String room;
 	private int age;
 	private String gender;
 	private Date lastEnteredDate;
@@ -41,6 +42,12 @@ public class Patient {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getRoom() {
+		return room;
+	}
+	public void setRoom(String room) {
+		this.room = room;
 	}
 	public int getAge() {
 		return age;

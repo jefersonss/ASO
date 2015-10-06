@@ -3,15 +3,18 @@ package br.unisinos.aso.model;
 import java.sql.Date;
 import java.util.Arrays;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import br.unisinos.aso.dao.*;
 
 public class Main {
 
 	public static void main(String[] args) {
-		PatientDAO dao = new PatientDAO();
-		DiseaseDAO diseaseDao = new DiseaseDAO();
-		ExamDAO examDao = new ExamDAO();
-		MedicationDAO medDao = new MedicationDAO();
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+		
+		DiseaseDAO diseaseDao = context.getBean(DiseaseDAO.class);
+		ExamDAO examDao = context.getBean(ExamDAO.class);
+		MedicationDAO medDao = context.getBean(MedicationDAO.class);
 		Date today = new Date(new java.util.Date().getTime());
 		
 		Patient patient = new Patient();
@@ -23,7 +26,7 @@ public class Main {
 		Disease disease = new Disease();
 		disease.setName("Cancer");
 		patient.setDisease(Arrays.asList(disease));
-		diseaseDao.saveDisease(disease);
+//		diseaseDao.saveDisease(disease);
 		
 		Treatment treatment = new Treatment();
 		treatment.setObservations("Cancer in the lungs due to cigarrete");
@@ -31,24 +34,26 @@ public class Main {
 		Exam exam = new Exam();
 		exam.setName("Radiography");
 		exam.setDate(today);
-		examDao.saveExam(exam);
+//		examDao.saveExam(exam);
 		treatment.setExam(Arrays.asList(exam));
 		
 		Medication admMedication = new Medication();
 		admMedication.setName("Radiotherapy");
 		admMedication.setType("Procedure");
 		admMedication.setDateAdministered(today);
-		medDao.save(admMedication);
+//		medDao.save(admMedication);
 		treatment.setAdministeredMedication(Arrays.asList(admMedication));
 		
 		Medication recMedication = new Medication();
 		recMedication.setName("Quimiotherapy");
 		recMedication.setType("Procedure");
 		recMedication.setDateAdministered(today);
-		medDao.save(recMedication);
+//		medDao.save(recMedication);
 		treatment.setRecommendedMedication(Arrays.asList(recMedication));
 		
 		patient.setTreatment(Arrays.asList(treatment));
+		
+		PatientDAO dao = context.getBean(PatientDAO.class);
 		
 		dao.savePatient(patient);
 		
@@ -60,7 +65,7 @@ public class Main {
 		patient2.setName("Joazinho");
 		dao.savePatient(patient2);
 		
-		
+		context.close();
 //		dao.commitAndCloseConnection();
 		
 //		List<Patient> patients = dao.getPatients();

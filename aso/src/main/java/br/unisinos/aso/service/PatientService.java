@@ -1,7 +1,6 @@
 package br.unisinos.aso.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -45,12 +44,20 @@ public class PatientService {
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<String> getPatients(){
+	public Map<String, List<Patient>> getPatients(){
 		List<Patient> patients = patientDAO.getPatients();
-		List<String> patientsJson = new ArrayList<String>();
+		Map<String, List<Patient>> patientsMap = new HashMap<String, List<Patient>>();
+		
 		for (Patient patient : patients) {
-			patientsJson.add(jsonConverter.convert(patient));
+			if(patientsMap.containsKey(patient.getRoom()))
+				patientsMap.get(patient.getRoom()).add(patient);
+			else{
+				List<Patient> patientList = new ArrayList<Patient>();
+				patientList.add(patient);
+				patientsMap.put(patient.getRoom(), patientList);
+			}
 		}
-		return patientsJson;
+		
+		return patientsMap;
 	}
 }
