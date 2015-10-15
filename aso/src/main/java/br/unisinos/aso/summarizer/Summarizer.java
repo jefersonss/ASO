@@ -16,9 +16,7 @@ public class Summarizer {
 	@Autowired
 	private PatientDAO patientDAO;
 
-	public Patient getSummarizedPatient(int patientId){
-		Patient patient = patientDAO.getPatientById(patientId);
-		
+	public Patient getSummarizedPatient(Patient patient){
 		patient.setTreatment(filterLatestTreatmentInfo(patient.getTreatment()));
 		return patient;
 	}
@@ -43,7 +41,7 @@ public class Summarizer {
 		for (Medication medication : medications) {
 			DateTime jodaTime = new DateTime(medication.getDateAdministered().getTime());
 			
-			if(Days.daysBetween(jodaTime.toLocalDate(), today.toLocalDate()).getDays() <= 1)
+			//if(Days.daysBetween(jodaTime.toLocalDate(), today.toLocalDate()).getDays() <= 1)
 				filteredList.add(medication);
 		}
 		return filteredList;
@@ -55,7 +53,7 @@ public class Summarizer {
 		for (Exam exam : exams) {
 			DateTime jodaTime = new DateTime(exam.getDate().getTime());
 			
-			if(Days.daysBetween(jodaTime.toLocalDate(), today.toLocalDate()).getDays() <= 1)
+			//if(Days.daysBetween(jodaTime.toLocalDate(), today.toLocalDate()).getDays() <= 1)
 				filteredList.add(exam);
 		}
 		return filteredList;

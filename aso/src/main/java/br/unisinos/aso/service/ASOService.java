@@ -11,6 +11,8 @@ import br.unisinos.aso.converter.json.JSONConverter;
 import br.unisinos.aso.dao.PatientDAO;
 import br.unisinos.aso.model.Patient;
 import br.unisinos.aso.summarizer.Summarizer;
+import br.unisinos.aso.transformer.TransformedInfo;
+import br.unisinos.aso.transformer.Transformer;
 
 @Path("aso")
 @Service
@@ -24,6 +26,8 @@ public class ASOService {
 	private JSONConverter jsonConverter;
 	@Autowired
 	private HL7Converter hl7Converter;
+	@Autowired
+	private Transformer transformer;
 	
 	@Path("/aggregateInfo")
 	@POST
@@ -40,8 +44,10 @@ public class ASOService {
 		System.out.println("Chegou");
 		
 		int id = Integer.parseInt(patientId);
-		Patient patient = summarizer.getSummarizedPatient(id);
+		Patient patient = patientDAO.getPatientById(id);
+		TransformedInfo transformed = transformer.transformPatientInfo(patient);
+		patient = summarizer.getSummarizedPatient(patient);
 		
-		return jsonConverter.convert(patient);
+		return jsonConverter.convert(patient, transformed);
 	}
 }

@@ -22,7 +22,7 @@ public class HL7Converter {
 		ADT_A01 message = convert(hl7Data);
 		Patient patient = new Patient();
 		
-		patient.setDisease(Arrays.asList(getDiseaseData(message)));
+		patient.setDiseases(Arrays.asList(getDiseaseData(message)));
 		patient.setTreatment(getTreatmentData(message));
 		getTreatmentData(message);
 		

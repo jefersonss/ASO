@@ -3,3 +3,5 @@
 /aso/.settings
 /aso/*.project
 /.metadata
+
+.recommenders/

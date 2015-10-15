@@ -1,5 +1,6 @@
 package br.unisinos.aso.dao;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.*;
@@ -49,6 +50,16 @@ public class PatientDAO{
 		session.update(patient);
 		tx.commit();
 		session.close();
+	}
+	
+	public List<Patient> getPatientsWithId(List<Integer> patientsIdsWithDisease) {
+		List<Patient> patients = new LinkedList<Patient>();
+		
+		for (Integer patientID : patientsIdsWithDisease) {
+			patients.add(getPatientById(patientID));
+		}
+		
+		return patients;
 	}
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {

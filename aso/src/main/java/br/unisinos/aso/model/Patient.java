@@ -1,7 +1,7 @@
 package br.unisinos.aso.model;
 
 import java.sql.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -12,7 +12,7 @@ public class Patient {
 	private int id;
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "patient_disease", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "disease_id") })
-	private List<Disease> disease;
+	private List<Disease> diseases;
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "patient_treatment", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
 	private List<Treatment> treatment;
@@ -25,11 +25,14 @@ public class Patient {
 	public int getId() {
 		return id;
 	}
-	public List<Disease> getDisease() {
-		return disease;
+	public void setId(int id) {
+		this.id = id;
 	}
-	public void setDisease(List<Disease> disease) {
-		this.disease = disease;
+	public List<Disease> getDiseases() {
+		return diseases;
+	}
+	public void setDiseases(List<Disease> diseases) {
+		this.diseases = diseases;
 	}
 	public List<Treatment> getTreatment() {
 		return treatment;
@@ -67,9 +70,19 @@ public class Patient {
 	public void setLastEnteredDate(Date lastEnteredDate) {
 		this.lastEnteredDate = lastEnteredDate;
 	}
+	
+	public List<Exam> getAllExams() {
+		List<Exam> allExams = new LinkedList<Exam>();
+		
+		for(Treatment treatment : getTreatment()){
+			allExams.addAll(treatment.getExam());
+		}
+		return allExams;
+	}
+	
 	@Override
 	public String toString() {
-		return "Patient [id=" + id + ", disease=" + disease + ", treatment="
+		return "Patient [id=" + id + ", disease=" + diseases + ", treatment="
 				+ treatment + ", name=" + name + ", age=" + age + ", gender="
 				+ gender + "]";
 	}
