@@ -28,12 +28,16 @@ public class PatientDAO{
 		Session session = this.sessionFactory.openSession();
 		String hql = "FROM Patient P WHERE P.name LIKE :patient_name";
 		Query query = session.createQuery(hql).setParameter("patient_name", name+"%");
-		return query.list();
+		List<Patient> patients = query.list();
+		session.close();
+		return patients;
 	}
 	
 	public Patient getPatientById(int patientId){
 		Session session = this.sessionFactory.openSession();
-		return (Patient) session.get(Patient.class, patientId);
+		Patient patient = (Patient) session.get(Patient.class, patientId);
+		session.close();
+		return patient;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -41,7 +45,9 @@ public class PatientDAO{
 		Session session = this.sessionFactory.openSession();
 		String hql = "FROM Patient";
 		Query query = session.createQuery(hql);
-		return query.list();
+		List<Patient> patients = query.list();
+		session.close();
+		return patients;
 	}
 	
 	public void updatePatient(Patient patient) {
@@ -64,5 +70,9 @@ public class PatientDAO{
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
 	}
 }

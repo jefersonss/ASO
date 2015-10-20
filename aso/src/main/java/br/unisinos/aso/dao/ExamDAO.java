@@ -27,7 +27,9 @@ public class ExamDAO{
 		Session session = this.sessionFactory.openSession();
 		String hql = "FROM Exam E WHERE E.name LIKE :exam_name";
 		Query query = session.createQuery(hql).setParameter("exam_name", name+"%");
-		return query.list();
+		List<Exam> exams = query.list();
+		session.close();
+		return exams;
 	}
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {

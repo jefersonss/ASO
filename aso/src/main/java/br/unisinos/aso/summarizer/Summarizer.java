@@ -1,23 +1,21 @@
 package br.unisinos.aso.summarizer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.unisinos.aso.dao.PatientDAO;
 import br.unisinos.aso.model.*;
 
 @Component
 public class Summarizer {
 	
-	@Autowired
-	private PatientDAO patientDAO;
-
 	public Patient getSummarizedPatient(Patient patient){
+		DateTime today = new DateTime();
 		patient.setTreatment(filterLatestTreatmentInfo(patient.getTreatment()));
+		patient.setAdministeredMedication(filterLatestMedication(patient.getAdministeredMedication(), today));
+		patient.setRecommendedMedication(filterLatestMedication(patient.getRecommendedMedication(), today));
 		return patient;
 	}
 
@@ -27,9 +25,6 @@ public class Summarizer {
 		
 		for (Treatment treatment : treatmentList) {
 			treatment.setExam(filterLatestExams(treatment.getExam(), today));
-			treatment.setAdministeredMedication(filterLatestMedication(treatment.getAdministeredMedication(), today));
-			treatment.setRecommendedMedication(filterLatestMedication(treatment.getRecommendedMedication(), today));
-			
 			filteredList.add(treatment);
 		}
 		return filteredList;
@@ -59,7 +54,4 @@ public class Summarizer {
 		return filteredList;
 	}
 	
-	public void setPatientDAO(PatientDAO patientDAO) {
-		this.patientDAO = patientDAO;
-	}
 }

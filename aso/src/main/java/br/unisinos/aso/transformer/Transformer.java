@@ -1,15 +1,16 @@
 package br.unisinos.aso.transformer;
 
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.googlecode.charts4j.*;
 
-import br.unisinos.aso.dao.DiseaseDAO;
-import br.unisinos.aso.dao.PatientDAO;
+import br.unisinos.aso.dao.*;
 import br.unisinos.aso.model.*;
 
 @Component
@@ -19,9 +20,12 @@ public class Transformer {
 	private DiseaseDAO diseaseDAO;
 	@Autowired
 	private PatientDAO patientDAO;
+	@Autowired
+	private MedicationDAO medicationDAO;
+	private List<Patient> patientsWithDisease;
 
-	public TransformedInfo transformPatientInfo(Patient patient) {
-		List<Treatment> patientTreatment = patient.getTreatment();
+	public TransformedInfo transformPatientInfo(Patient patientTransforming) {
+		List<Treatment> patientTreatment = patientTransforming.getTreatment();
 		TransformedInfo info = new TransformedInfo();
 		
 		for (Treatment treatment : patientTreatment) {
@@ -29,12 +33,40 @@ public class Transformer {
 			info.setChartUrl(bloodPressureChartUrl);
 			System.out.println(bloodPressureChartUrl);
 			
-			String bloodPressureComparisonChartUrl = generateBloodPressureChartComparison(patient);
-			info.setComparisonChartUrl(bloodPressureComparisonChartUrl);
+			String bloodPressureComparisonChartUrl = generateBloodPressureChartComparison(patientTransforming);
+			info.setBloodPressureComparisonChartUrl(bloodPressureComparisonChartUrl);
 			System.out.println(bloodPressureComparisonChartUrl);
 		}
+		
+		patientsWithDisease.remove(patientTransforming);
+		info.setPatientsWithSameDiagnosis(patientsWithDisease);
+		List<Patient> patientsTakingSameMedication = listPatientsTakingSameMedication(patientTransforming.getAdministeredMedication());
+		
+		patientsTakingSameMedication.remove(patientTransforming);
+		info.setPatientsTakingSameMedication(patientsTakingSameMedication);
 
 		return info;
+	}
+	
+	public String generatePatientsByDiseaseChart() {
+		Map<String, BigInteger> patientCountByDisease = diseaseDAO.retrievePatientCountByDisease();
+		int totalCountOfPatients = getTotalCountOfPatients(patientCountByDisease);
+		List<Slice> pieChartSlices = new LinkedList<Slice>();
+		
+		for (String key : patientCountByDisease.keySet()) {
+			BigInteger numOfPatients = patientCountByDisease.get(key);
+			int percentOfPatients = (numOfPatients.intValue() * 100) / totalCountOfPatients;
+			
+			pieChartSlices.add(Slice.newSlice(percentOfPatients, key));
+		}
+
+        PieChart chart = GCharts.newPieChart(pieChartSlices);
+        chart.setTitle("Patients by diagnosis", Color.BLACK, 16);
+        chart.setSize(300, 150);
+        chart.setThreeD(true);
+        String chartUrl = chart.toURLString();
+        System.out.println(chartUrl);
+        return chartUrl;
 	}
 
 	private String generateBloodPressureCharts(List<Exam> exams) {
@@ -56,15 +88,6 @@ public class Transformer {
 		BarChart chart = createChart(MAX_PRESSURE, diastolicLevels, systolicLevels);
 		defineChartLabels(MAX_PRESSURE, examDates, chart);
 		
-		/*
-		 * view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
-		 */
-		
 		chart.setHorizontal(true);
 		chart.setSize(320, 290);
 		chart.setSpaceBetweenGroupsOfBars(15);
@@ -78,7 +101,7 @@ public class Transformer {
 	private String generateBloodPressureChartComparison(Patient patient) {
 		final int MAX_PRESSURE = 51;
 		List<Integer> patientsIdsWithDisease = diseaseDAO.getPatientsWithDisease(patient.getDiseases().get(0));
-		List<Patient> patientsWithDisease = patientDAO.getPatientsWithId(patientsIdsWithDisease);
+		patientsWithDisease = patientDAO.getPatientsWithId(patientsIdsWithDisease);
 		List<Double> diastolicBloodByPatient = new LinkedList<Double>();
 		List<Double> sistolicBloodByPatient = new LinkedList<Double>();
 		List<String> patientNames = new LinkedList<String>();
@@ -126,6 +149,20 @@ public class Transformer {
 		chart.addXAxisLabels(yValues);
 		chart.addYAxisLabels(nameLabels);
 		chart.addTopAxisLabels(xValues);
+	}
+	
+	private int getTotalCountOfPatients(Map<String, BigInteger> patientCountByDisease) {
+		int totalOfPatients = 0;
+		
+		for(Entry<String, BigInteger> patientCount : patientCountByDisease.entrySet())
+			totalOfPatients += patientCount.getValue().intValue();
+		return totalOfPatients;
+	}
+
+	private List<Patient> listPatientsTakingSameMedication(List<Medication> administeredMedication) {
+		List<Integer> patientIds = medicationDAO.getPatientsTakingSameMedication(administeredMedication);
+		List<Patient> patients = patientDAO.getPatientsWithId(patientIds);
+		return patients;
 	}
 
 	private Double getAverage(List<Exam> allExams, String examType) {

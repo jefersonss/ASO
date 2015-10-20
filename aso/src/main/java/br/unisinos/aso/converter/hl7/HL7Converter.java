@@ -32,6 +32,9 @@ public class HL7Converter {
 		patient.setGender(message.getPID().getSex().getValue());
 		patient.setAge(calculatePatientAge(message));
 		
+		patient.setAdministeredMedication(getMedicationData(message));
+		patient.setRecommendedMedication(getMedicationData(message));
+		
 		return patient;
 	}
 
@@ -71,15 +74,11 @@ public class HL7Converter {
 
 	public List<Medication> getMedicationData(ADT_A01 message) {
 		Medication medication = new Medication();
-		
-		
 		return Arrays.asList(medication);
 	}
 
 	private List<Treatment> getTreatmentData(ADT_A01 message) {
 		Treatment treatment = new Treatment();
-		treatment.setAdministeredMedication(getMedicationData(message));
-		treatment.setRecommendedMedication(getMedicationData(message));
 		treatment.setExam(getExamData(message));
 		
 		return Arrays.asList(treatment);

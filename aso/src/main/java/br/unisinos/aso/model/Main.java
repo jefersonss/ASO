@@ -2,20 +2,18 @@ package br.unisinos.aso.model;
 
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.List;
 
 import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import br.unisinos.aso.dao.*;
+import br.unisinos.aso.dao.PatientDAO;
 
 public class Main {
 
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		
-		DiseaseDAO diseaseDao = context.getBean(DiseaseDAO.class);
-		ExamDAO examDao = context.getBean(ExamDAO.class);
-		MedicationDAO medDao = context.getBean(MedicationDAO.class);
 		Date today = new Date(new java.util.Date().getTime());
 		
 		Patient patient = new Patient();
@@ -65,20 +63,21 @@ public class Main {
 		treatment.setExam(Arrays.asList(exam, exam2, exam3, exam4, exam5, exam6));
 		
 		Medication admMedication = new Medication();
-		admMedication.setName("Radiotherapy");
-		admMedication.setType("Procedure");
+		admMedication.setName("Celestamine");
+		admMedication.setType("Xarope");
 		admMedication.setDateAdministered(today);
-		treatment.setAdministeredMedication(Arrays.asList(admMedication));
+		patient.setAdministeredMedication(Arrays.asList(admMedication));
 		
 		Medication recMedication = new Medication();
-		recMedication.setName("Quimiotherapy");
-		recMedication.setType("Procedure");
+		recMedication.setName("Dipirona");
+		recMedication.setType("Pills");
 		recMedication.setDateAdministered(today);
-		treatment.setRecommendedMedication(Arrays.asList(recMedication));
+		patient.setRecommendedMedication(Arrays.asList(recMedication));
 		
 		patient.setTreatment(Arrays.asList(treatment));
 		
 		PatientDAO dao = context.getBean(PatientDAO.class);
+
 		
 		dao.savePatient(patient);
 		
@@ -90,7 +89,6 @@ public class Main {
 		patient2.setName("Joazinho");
 		patient2.setLastEnteredDate(today);
 		
-		//patient2.setDiseases(Arrays.asList(diseaseDao.getDiseaseByName("Cancer")));
 		
 		Treatment treatment2 = new Treatment();
 		treatment2.setObservations("Cancer in the lungs due to cigarrete");
@@ -129,21 +127,24 @@ public class Main {
 		treatment2.setExam(Arrays.asList(exam7, exam8, exam9, exam10, exam11, exam12));
 		
 		Medication admMedication2 = new Medication();
-		admMedication2.setName("Radiotherapy");
-		admMedication2.setType("Procedure");
+		admMedication2.setName("Celestamine");
+		admMedication2.setType("Xarope");
 		admMedication2.setDateAdministered(today);
-		treatment2.setAdministeredMedication(Arrays.asList(admMedication2));
+		patient2.setAdministeredMedication(Arrays.asList(admMedication2));
 		
 		Medication recMedication2 = new Medication();
-		recMedication2.setName("Quimiotherapy");
-		recMedication2.setType("Procedure");
+		recMedication2.setName("Dipirona");
+		recMedication2.setType("Pills");
 		recMedication2.setDateAdministered(today);
-		treatment2.setRecommendedMedication(Arrays.asList(recMedication2));
+		patient2.setRecommendedMedication(Arrays.asList(recMedication2));
 		
 		patient2.setTreatment(Arrays.asList(treatment2));
 		
 		
 		dao.savePatient(patient2);
+		
+//		DiseaseDAO diseaseDao = context.getBean(DiseaseDAO.class);
+//		diseaseDao.retrievePatientCountByDisease();
 		
 		context.close();
 //		dao.commitAndCloseConnection();
