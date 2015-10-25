@@ -10,6 +10,7 @@ public class TransformedInfo {
 	private List<Patient> patientsWithSameDiagnosis;
 	private List<Patient> patientsTakingSameMedication;
 	private String patientByDiseaseChart;
+	private List<String> vitalSignsEvolutionChart;
 	
 	public String getChartUrl() {
 		return chartUrl;
@@ -40,5 +41,11 @@ public class TransformedInfo {
 	}
 	public void setPatientByDiseaseChart(String patientByDiseaseChart) {
 		this.patientByDiseaseChart = patientByDiseaseChart;
+	}
+	public List<String> getVitalSignsEvolutionChart() {
+		return vitalSignsEvolutionChart;
+	}
+	public void setVitalSignsEvolutionChart(List<String> vitalSignsEvolutionChart) {
+		this.vitalSignsEvolutionChart = vitalSignsEvolutionChart;
 	}
 }

@@ -22,11 +22,15 @@ public class Transformer {
 	private PatientDAO patientDAO;
 	@Autowired
 	private MedicationDAO medicationDAO;
+//	@Autowired
+//	private ExamDAO examDAO;
 	private List<Patient> patientsWithDisease;
 
 	public TransformedInfo transformPatientInfo(Patient patientTransforming) {
-		List<Treatment> patientTreatment = patientTransforming.getTreatment();
+		Set<Treatment> patientTreatment = patientTransforming.getTreatment();
 		TransformedInfo info = new TransformedInfo();
+		
+		info.setVitalSignsEvolutionChart(generateVitalSignsEvolutionChart(patientTransforming));
 		
 		for (Treatment treatment : patientTreatment) {
 			String bloodPressureChartUrl = generateBloodPressureCharts(treatment.getExam());
@@ -48,6 +52,53 @@ public class Transformer {
 		return info;
 	}
 	
+	private List<String> generateVitalSignsEvolutionChart(Patient patient){
+		List<String> urlList = new LinkedList<String>();
+		Map<String, List<String>> examResults = buildResultsFromExamList(patient.getAllExams());
+		
+		for(String key : examResults.keySet()){
+			List<String> resultList = examResults.get(key);
+			double[] resultArray = new double[resultList.size()];
+			
+			for(int i = 0; i<resultList.size(); i++) resultArray[i] = Double.parseDouble(resultList.get(i));
+			
+			Collections.sort(resultList);
+			
+	        Line line1 = Plots.newLine(Data.newData(resultArray), Color.newColor("CA3D05"), key);
+	        line1.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
+	        line1.addShapeMarkers(Shape.DIAMOND, Color.newColor("CA3D05"), 12);
+	        line1.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
+	        LineChart chart = GCharts.newLineChart(line1);
+	        
+	        chart.setSize(600, 450);
+	        chart.setTitle(key+" evolution", Color.WHITE, 14);
+	        chart.setGrid(25, 25, 3, 2);
+	        
+	        // Defining axis info and styles
+	        AxisStyle axisStyle = AxisStyle.newAxisStyle(Color.WHITE, 12, AxisTextAlignment.CENTER);
+	        AxisLabels yAxis = AxisLabelsFactory.newAxisLabels(resultList);
+	        yAxis.setAxisStyle(axisStyle);
+	        
+	        chart.addYAxisLabels(yAxis);
+	        
+	        urlList.add(chart.toURLString());
+		}
+		
+		return urlList;
+	}
+	
+	private Map<String, List<String>> buildResultsFromExamList(List<Exam> allExams) {
+		Map<String, List<String>> examResultMap = new HashMap<String, List<String>>();
+		
+		for(Exam exam : allExams){
+			List<String> results = examResultMap.get(exam.getName());
+			if(null == results) results = new LinkedList<String>();
+			results.add(exam.getResults());
+			examResultMap.put(exam.getName(), results);
+		}
+		return examResultMap;
+	}
+
 	public String generatePatientsByDiseaseChart() {
 		Map<String, BigInteger> patientCountByDisease = diseaseDAO.retrievePatientCountByDisease();
 		int totalCountOfPatients = getTotalCountOfPatients(patientCountByDisease);
@@ -69,7 +120,7 @@ public class Transformer {
         return chartUrl;
 	}
 
-	private String generateBloodPressureCharts(List<Exam> exams) {
+	private String generateBloodPressureCharts(Set<Exam> exams) {
 		final int MAX_PRESSURE = 51;
 		List<Double> diastolicLevels = new LinkedList<Double>();
 		List<Double> systolicLevels = new LinkedList<Double>();
@@ -100,7 +151,7 @@ public class Transformer {
 
 	private String generateBloodPressureChartComparison(Patient patient) {
 		final int MAX_PRESSURE = 51;
-		List<Integer> patientsIdsWithDisease = diseaseDAO.getPatientsWithDisease(patient.getDiseases().get(0));
+		List<Integer> patientsIdsWithDisease = diseaseDAO.getPatientsWithDisease(patient.getDiseases().iterator().next());
 		patientsWithDisease = patientDAO.getPatientsWithId(patientsIdsWithDisease);
 		List<Double> diastolicBloodByPatient = new LinkedList<Double>();
 		List<Double> sistolicBloodByPatient = new LinkedList<Double>();
@@ -159,7 +210,7 @@ public class Transformer {
 		return totalOfPatients;
 	}
 
-	private List<Patient> listPatientsTakingSameMedication(List<Medication> administeredMedication) {
+	private List<Patient> listPatientsTakingSameMedication(Set<Medication> administeredMedication) {
 		List<Integer> patientIds = medicationDAO.getPatientsTakingSameMedication(administeredMedication);
 		List<Patient> patients = patientDAO.getPatientsWithId(patientIds);
 		return patients;

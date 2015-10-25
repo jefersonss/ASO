@@ -1,6 +1,6 @@
 package br.unisinos.aso.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -12,15 +12,15 @@ public class Treatment {
 	private String observations;
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "treat_exam", joinColumns = { @JoinColumn(name = "treatment_id") }, inverseJoinColumns = { @JoinColumn(name = "exam_id") })
-	private List<Exam> exam;
+	private Set<Exam> exam;
 	
 	public int getId() {
 		return id;
 	}
-	public List<Exam> getExam() {
+	public Set<Exam> getExam() {
 		return exam;
 	}
-	public void setExam(List<Exam> exam) {
+	public void setExam(Set<Exam> exam) {
 		this.exam = exam;
 	}
 	public String getObservations() {

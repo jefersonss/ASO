@@ -1,7 +1,6 @@
 package br.unisinos.aso.dao;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class MedicationDAO extends BaseDAO {
 		session.close();
 	}
 	
-	public List<Integer> getPatientsTakingSameMedication(List<Medication> medications){
+	public List<Integer> getPatientsTakingSameMedication(Set<Medication> administeredMedication){
 		Session session = this.sessionFactory.openSession();
         
 		String sql = "SELECT p.* FROM Patient p, Medication m, Administered_Medication am "
@@ -31,16 +30,16 @@ public class MedicationDAO extends BaseDAO {
 				+ "AND am.medication_id = m.id "
 				+ "AND m.name in (:medication_name)";
 		
-		Query sqlQuery = session.createSQLQuery(sql).setParameter("medication_name", buildMedicationListNames(medications));
+		Query sqlQuery = session.createSQLQuery(sql).setParameter("medication_name", buildMedicationListNames(administeredMedication));
 		List<Integer> patientIds = buildPatientList(sqlQuery.list());
 		session.close();
 		return patientIds;
 	}
 	
-	private String buildMedicationListNames(List<Medication> medications) {
+	private String buildMedicationListNames(Set<Medication> administeredMedication) {
 		StringBuilder medicationNames = new StringBuilder();
 		
-		for (Medication medication : medications)
+		for (Medication medication : administeredMedication)
 			medicationNames.append(medication.getName()).append(",");
 		
 		return medicationNames.substring(0, medicationNames.length()-1);

@@ -25,8 +25,8 @@ public class JSONConverter {
 			
 			ObjectNode changedJSON = ((ObjectNode)readTree).put("chartUrl", transformed.getChartUrl());
 			changedJSON = changedJSON.put("bloodPressureComparisonChartUrl", transformed.getBloodPressureComparisonChartUrl());
-//			changedJSON = changedJSON.put("patientsByDiseaseChartUrl", transformed.getPatientByDiseaseChart());
 			
+			addUrlList(transformed.getVitalSignsEvolutionChart(), changedJSON, "vitalSignsEvolutionChart");
 			addPatientList(transformed.getPatientsWithSameDiagnosis(), changedJSON, "patientsWithSameDiagnosis");
 			addPatientList(transformed.getPatientsTakingSameMedication(), changedJSON, "patientsTakingSameMedication");
 			
@@ -38,12 +38,21 @@ public class JSONConverter {
 		return patientJson;
 	}
 
+	private void addUrlList(List<String> vitalSignsEvolutionChart, ObjectNode changedJSON, String arrayName) {
+		ArrayNode arrayNode = changedJSON.arrayNode();
+		
+		for (String url : vitalSignsEvolutionChart)
+			arrayNode.add(url);
+		
+		changedJSON.putArray(arrayName).addAll(arrayNode);
+	}
+
 	private void addPatientList(List<Patient> list, ObjectNode changedJSON, String arrayName) {
 		ArrayNode arrayNode = changedJSON.arrayNode();
 		
-		for(Patient transformedPatient : list){
+		for(Patient transformedPatient : list)
 			arrayNode.addPOJO(transformedPatient);
-		}
+		
 		changedJSON.putArray(arrayName).addAll(arrayNode);
 	}
 }

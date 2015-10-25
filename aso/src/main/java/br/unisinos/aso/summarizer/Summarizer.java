@@ -1,7 +1,6 @@
 package br.unisinos.aso.summarizer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
@@ -19,9 +18,9 @@ public class Summarizer {
 		return patient;
 	}
 
-	private List<Treatment> filterLatestTreatmentInfo(List<Treatment> treatmentList) {
+	private Set<Treatment> filterLatestTreatmentInfo(Set<Treatment> treatmentList) {
 		DateTime today = new DateTime();
-		List<Treatment> filteredList = new ArrayList<Treatment>();
+		Set<Treatment> filteredList = new HashSet<Treatment>();
 		
 		for (Treatment treatment : treatmentList) {
 			treatment.setExam(filterLatestExams(treatment.getExam(), today));
@@ -30,8 +29,8 @@ public class Summarizer {
 		return filteredList;
 	}
 
-	private List<Medication> filterLatestMedication(List<Medication> medications, DateTime today) {
-		List<Medication> filteredList = new ArrayList<Medication>();
+	private Set<Medication> filterLatestMedication(Set<Medication> medications, DateTime today) {
+		Set<Medication> filteredList = new HashSet<Medication>();
 		
 		for (Medication medication : medications) {
 			DateTime jodaTime = new DateTime(medication.getDateAdministered().getTime());
@@ -42,8 +41,8 @@ public class Summarizer {
 		return filteredList;
 	}
 
-	private List<Exam> filterLatestExams(List<Exam> exams, DateTime today) {
-		List<Exam> filteredList = new ArrayList<Exam>();
+	private Set<Exam> filterLatestExams(Set<Exam> exams, DateTime today) {
+		Set<Exam> filteredList = new HashSet<Exam>();
 		
 		for (Exam exam : exams) {
 			DateTime jodaTime = new DateTime(exam.getDate().getTime());

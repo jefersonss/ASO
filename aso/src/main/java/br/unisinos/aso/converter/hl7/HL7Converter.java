@@ -6,6 +6,8 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.springframework.stereotype.Component;
 
+import com.google.common.collect.Sets;
+
 import br.unisinos.aso.model.*;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
@@ -22,7 +24,7 @@ public class HL7Converter {
 		ADT_A01 message = convert(hl7Data);
 		Patient patient = new Patient();
 		
-		patient.setDiseases(Arrays.asList(getDiseaseData(message)));
+		patient.setDiseases(Sets.newHashSet(getDiseaseData(message)));
 		patient.setTreatment(getTreatmentData(message));
 		getTreatmentData(message);
 		
@@ -55,8 +57,8 @@ public class HL7Converter {
 		return patientAge;
 	}
 
-	private List<Exam> getExamData(ADT_A01 message) {
-		List<Exam> exams = new ArrayList<Exam>();
+	private Set<Exam> getExamData(ADT_A01 message) {
+		Set<Exam> exams = new HashSet<Exam>();
 		
 		ST[] procedureDescription = message.getPR1().getProcedureDescription();
 		for (ST description : procedureDescription) {
@@ -72,16 +74,16 @@ public class HL7Converter {
 		return disease;
 	}
 
-	public List<Medication> getMedicationData(ADT_A01 message) {
+	public Set<Medication> getMedicationData(ADT_A01 message) {
 		Medication medication = new Medication();
-		return Arrays.asList(medication);
+		return Sets.newHashSet(medication);
 	}
 
-	private List<Treatment> getTreatmentData(ADT_A01 message) {
+	private Set<Treatment> getTreatmentData(ADT_A01 message) {
 		Treatment treatment = new Treatment();
 		treatment.setExam(getExamData(message));
 		
-		return Arrays.asList(treatment);
+		return Sets.newHashSet(treatment);
 	}
 
 	private ADT_A01 convert(String hl7Data) {

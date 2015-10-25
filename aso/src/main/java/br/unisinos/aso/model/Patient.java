@@ -12,16 +12,16 @@ public class Patient {
 	private int id;
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "patient_disease", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "disease_id") })
-	private List<Disease> diseases;
+	private Set<Disease> diseases;
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "patient_treatment", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "treatment_id") })
-	private List<Treatment> treatment;
+	private Set<Treatment> treatment;
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "recomended_medication", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "medication_id") })
-	private List<Medication> recommendedMedication;
+	private Set<Medication> recommendedMedication;
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "administered_medication", joinColumns = { @JoinColumn(name = "patient_id") }, inverseJoinColumns = { @JoinColumn(name = "medication_id") })
-	private List<Medication> administeredMedication;
+	private Set<Medication> administeredMedication;
 	private String name;
 	private String room;
 	private int age;
@@ -34,28 +34,28 @@ public class Patient {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public List<Disease> getDiseases() {
+	public Set<Disease> getDiseases() {
 		return diseases;
 	}
-	public void setDiseases(List<Disease> diseases) {
+	public void setDiseases(Set<Disease> diseases) {
 		this.diseases = diseases;
 	}
-	public List<Treatment> getTreatment() {
+	public Set<Treatment> getTreatment() {
 		return treatment;
 	}
-	public void setTreatment(List<Treatment> treatment) {
+	public void setTreatment(Set<Treatment> treatment) {
 		this.treatment = treatment;
 	}
-	public List<Medication> getRecommendedMedication() {
+	public Set<Medication> getRecommendedMedication() {
 		return recommendedMedication;
 	}
-	public void setRecommendedMedication(List<Medication> recommendedMedication) {
+	public void setRecommendedMedication(Set<Medication> recommendedMedication) {
 		this.recommendedMedication = recommendedMedication;
 	}
-	public List<Medication> getAdministeredMedication() {
+	public Set<Medication> getAdministeredMedication() {
 		return administeredMedication;
 	}
-	public void setAdministeredMedication(List<Medication> administeredMedication) {
+	public void setAdministeredMedication(Set<Medication> administeredMedication) {
 		this.administeredMedication = administeredMedication;
 	}
 	public String getName() {
