@@ -25,6 +25,7 @@ public class Transformer {
 //	@Autowired
 //	private ExamDAO examDAO;
 	private List<Patient> patientsWithDisease;
+	SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	public TransformedInfo transformPatientInfo(Patient patientTransforming) {
 		Set<Treatment> patientTreatment = patientTransforming.getTreatment();
@@ -57,44 +58,77 @@ public class Transformer {
 		Map<String, List<String>> examResults = buildResultsFromExamList(patient.getAllExams());
 		
 		for(String key : examResults.keySet()){
-			List<String> resultList = examResults.get(key);
+			if(key.endsWith("2")) continue;
+			else key = key.substring(0, key.length()-1);
+			
+			List<String> resultList = examResults.get(key+"1");
 			double[] resultArray = new double[resultList.size()];
+			for(int i = 0; i<resultList.size(); i++){
+				resultArray[i] = Double.parseDouble(resultList.get(i));
+			}
 			
-			for(int i = 0; i<resultList.size(); i++) resultArray[i] = Double.parseDouble(resultList.get(i));
-			
-			Collections.sort(resultList);
-			
-	        Line line1 = Plots.newLine(Data.newData(resultArray), Color.newColor("CA3D05"), key);
-	        line1.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
-	        line1.addShapeMarkers(Shape.DIAMOND, Color.newColor("CA3D05"), 12);
-	        line1.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
+			sortResultsInAscendingOrder(resultList);
+			double maxValue = Double.parseDouble(resultList.get(resultList.size()-1));
+			double minValue = Double.parseDouble(resultList.get(0));
+			minValue = minValue < 5 ? 0 : minValue -5; 
+
+			Line line1 = Plots.newLine(DataUtil.scaleWithinRange(minValue, maxValue, resultArray), Color.newColor("CA3D05"), key);
 	        LineChart chart = GCharts.newLineChart(line1);
 	        
 	        chart.setSize(600, 450);
 	        chart.setTitle(key+" evolution", Color.WHITE, 14);
-	        chart.setGrid(25, 25, 3, 2);
+	        int xStepSize = 100/(resultArray.length-1);
+			double yStepSize = maxValue/(resultArray.length-1);
+			chart.setGrid(xStepSize, yStepSize, 3, 2);
 	        
-	        // Defining axis info and styles
-	        AxisStyle axisStyle = AxisStyle.newAxisStyle(Color.WHITE, 12, AxisTextAlignment.CENTER);
-	        AxisLabels yAxis = AxisLabelsFactory.newAxisLabels(resultList);
-	        yAxis.setAxisStyle(axisStyle);
+	        chart.addYAxisLabels(AxisLabelsFactory.newNumericRangeAxisLabels(minValue, maxValue));
 	        
-	        chart.addYAxisLabels(yAxis);
+	        List<Double> wrapperArray = wrapPrimitiveArrayInObjectList(resultArray, xStepSize);
+        	chart.addXAxisLabels(AxisLabelsFactory.newAxisLabels(examResults.get(key+"2"), wrapperArray));
 	        
 	        urlList.add(chart.toURLString());
 		}
 		
 		return urlList;
 	}
+
+	private List<Double> wrapPrimitiveArrayInObjectList(double[] resultArray, int xStepSize) {
+		List<Double> wrapperArray = new LinkedList<Double>();
+		for(double i = resultArray.length; i>0; i--){
+			double lastValue = wrapperArray.size() <= 1 ? 0 : wrapperArray.get(wrapperArray.size()-1);
+			wrapperArray.add(lastValue+xStepSize);
+		}
+		return wrapperArray;
+	}
+
+	private void sortResultsInAscendingOrder(List<String> resultList) {
+		Collections.sort(resultList, new Comparator<String>() {
+			public int compare(String o1, String o2) {
+				double dO1 = Double.parseDouble(o1);
+				double dO2 = Double.parseDouble(o2);
+				return (int) (dO1 - dO2);
+			}
+		});
+	}
 	
 	private Map<String, List<String>> buildResultsFromExamList(List<Exam> allExams) {
 		Map<String, List<String>> examResultMap = new HashMap<String, List<String>>();
-		
+		List<String> elegibleExams = Arrays.asList("Heart Rate", "Temperature", "Respirations", "SPO2", "BPS", "BPD");
 		for(Exam exam : allExams){
-			List<String> results = examResultMap.get(exam.getName());
-			if(null == results) results = new LinkedList<String>();
+			if(!elegibleExams.contains(exam.getName())) continue;
+			
+			List<String> results = examResultMap.get(exam.getName()+"1");
+			List<String> resultDates = examResultMap.get(exam.getName()+"2");
+			if(null == results) {
+				results = new LinkedList<String>();
+				results.add("0");
+				resultDates = new LinkedList<String>();
+				resultDates.add(" ");
+			}
 			results.add(exam.getResults());
-			examResultMap.put(exam.getName(), results);
+			resultDates.add(dateFormatter.format(exam.getDate()));
+			examResultMap.put(exam.getName()+"1", results);
+			examResultMap.put(exam.getName()+"2", resultDates);
 		}
 		return examResultMap;
 	}
@@ -125,7 +159,6 @@ public class Transformer {
 		List<Double> diastolicLevels = new LinkedList<Double>();
 		List<Double> systolicLevels = new LinkedList<Double>();
 		List<String> examDates = new LinkedList<String>();
-		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 		
 		for (Exam exam : exams) {
 			if(exam.getName().contains("systolic")){
