@@ -7,3 +7,6 @@
 .recommenders/
 /Servers
 /RemoteSystemsTempFiles
+*.project
+*
+*.project
