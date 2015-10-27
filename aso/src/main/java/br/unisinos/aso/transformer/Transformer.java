@@ -72,10 +72,10 @@ public class Transformer {
 			double minValue = Double.parseDouble(resultList.get(0));
 			minValue = minValue < 5 ? 0 : minValue -5; 
 
-			Line line1 = Plots.newLine(DataUtil.scaleWithinRange(minValue, maxValue, resultArray), Color.newColor("CA3D05"), key);
+			Line line1 = Plots.newLine(DataUtil.scaleWithinRange(minValue, maxValue, resultArray), Color.newColor("CA3D05"), key+" "+resultArray[resultArray.length-1]);
 	        LineChart chart = GCharts.newLineChart(line1);
 	        
-	        chart.setSize(600, 450);
+	        chart.setSize(300, 150);
 	        chart.setTitle(key+" evolution", Color.WHITE, 14);
 	        int xStepSize = 100/(resultArray.length-1);
 			double yStepSize = maxValue/(resultArray.length-1);
